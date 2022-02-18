@@ -1,0 +1,4 @@
+https://lucasgrinspan.github.io/MangoUI/docs/getting-started/
+https://lucasgrinspan.github.io/MangoUI/docs/components/banner
+https://lucasgrinspan.github.io/MangoUI/docs/components/menu
+https://lucasgrinspan.github.io/MangoUI/docs/components/tabs
