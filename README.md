@@ -2,6 +2,8 @@
 
 This is a small command line utility to analyze CSS classes usage on a list of sites. The utility compares the classes from the sites against the classes defined in the provided stylesheet.
 
+<img width="1116" alt="image" src="https://user-images.githubusercontent.com/32201603/154773934-691c5a5a-e5ac-4197-b4a5-50482f60b089.png">
+
 ## Usage
 
 The first positional argument is required and must be a URL to the stylesheet. The second positional argument is the site to scan. Alternatively, you can use the `-s path/to/file.txt` to provide a list of sites to scan. In that file, each URL must be on its own line.
