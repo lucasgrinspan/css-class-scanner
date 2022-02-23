@@ -1,0 +1,14 @@
+{
+  "name": "CSS Class Scanner",
+  "description": "Scan CSS classes in use on a site",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "permissions": ["activeTab", "scripting", "storage", "downloads"],
+  "action": {
+    "default_popup": "src/extension/popup.html"
+  },
+  "background": {
+    "service_worker": "src/extension/background.js",
+    "type": "module"
+  }
+}

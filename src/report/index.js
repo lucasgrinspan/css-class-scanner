@@ -34,7 +34,7 @@ const generateUnusedCsv = (unusedClasses) => {
 
 /**
  * Generates a CSV in the class,frequency format
- * @param {Array.<string>} htmlClasses Classes found in the HTML
+ * @param {Map.<string, number>} htmlClasses Classes found in the HTML
  */
 const generateUsedCsv = (htmlClasses) => {
   let csvString = "";

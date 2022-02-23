@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="../../node_modules/mango-ui-components/dist/mango.css" />
+  </head>
+
+  <style>
+    body {
+      background-color: var(--surface);
+    }
+    output {
+      display: block;
+      box-shadow: none !important;
+    }
+  </style>
+
+  <body class="p-comfortable">
+    <button id="start-recording" class="fluid">Start Recording</button>
+    <output id="output" class="mt-comfortable mb-comfortable card p-cozy text-center"></output>
+    <div class="stack-horizontal mt-comfortable mb-comfortable">
+      <button id="cancel" class="outline">Cancel</button>
+      <button id="export" class="icon icon-download">Export</button>
+    </div>
+    <label for="stylesheet-link">Stylesheet</label>
+    <small class="mb-none" id="stylesheet-hint">
+      The classes found will be filtered to the classes found in this stylesheet
+    </small>
+    <input id="stylesheet-link" type="text" aria-describedby="stylesheet-hint" />
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
