@@ -1,4 +1,4 @@
-// import { get/ClassesFromStylesheet } from "../utils/stylesheet.js";
+import { getClassesFromStylesheet } from "../utils/stylesheet.js";
 import { removeRecordingIndicator, getAllClasses } from "./extension.js";
 import Store from "./store.js";
 
@@ -56,8 +56,8 @@ const stopRecording = async () => {
 };
 
 const getClassNames = async (url) => {
-  // const classes = getClassesFromStylesheet(url);
-  // console.log(classes);
+  const classes = await getClassesFromStylesheet(url);
+  console.log(`background: stylesheet loaded, ${classes.length} classes found`);
 };
 
 const getResultsAsCsv = () => {

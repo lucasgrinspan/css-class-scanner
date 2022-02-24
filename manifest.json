@@ -8,7 +8,7 @@
     "default_popup": "src/extension/popup.html"
   },
   "background": {
-    "service_worker": "src/extension/background.js",
+    "service_worker": "dist/background.js",
     "type": "module"
   }
 }
