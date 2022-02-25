@@ -8,8 +8,10 @@ const store = new Store({
   isRecording: false,
   // the number of classes found so far
   numClassesFound: 0,
-  // stylesheet URL for comparison
+  // the URL of the external stylesheet
   stylesheetUrl: "",
+  // classes extracted from the stylesheet
+  referenceClasses: [],
 });
 
 // key is class and value is frequency
@@ -18,6 +20,11 @@ const gatheredClasses = new Map();
 // stores the result in working memory
 const updateClasses = ([injection]) => {
   injection.result.forEach((className) => {
+    // the class name should only be collected if it's from the stylesheet
+    if (!store.get("referenceClasses").includes(className)) {
+      return;
+    }
+
     const frequency = gatheredClasses.get(className);
 
     if (frequency) {
@@ -57,6 +64,7 @@ const stopRecording = async () => {
 
 const getClassNames = async (url) => {
   const classes = await getClassesFromStylesheet(url);
+  store.set("referenceClasses", classes, { broadcast: false });
   console.log(`background: stylesheet loaded, ${classes.length} classes found`);
 };
 
@@ -79,15 +87,6 @@ store.subscribe("isRecording", (isRecording) => {
   }
 });
 
-// listen for stylesheet URL being defined
-store.subscribe("stylesheetUrl", (url) => {
-  if (!url) {
-    return;
-  }
-  console.log("background: store data changed: stylesheetUrl:", url);
-  getClassNames(url);
-});
-
 // handles an action request from the UI
 const handleAction = (action, actionData, sendResponse) => {
   console.log("background: action received:", action);
@@ -97,6 +96,7 @@ const handleAction = (action, actionData, sendResponse) => {
       break;
     case "url":
       store.set("stylesheetUrl", actionData);
+      getClassNames(actionData);
       break;
     case "cancel":
       store.set("isRecording", false);

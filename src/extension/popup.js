@@ -39,7 +39,7 @@ const updateClassesFound = (classesFound) => {
 const isRecording = await getFromBackground("isRecording");
 const numClassesFound = await getFromBackground("numClassesFound");
 const stylesheetUrl = await getFromBackground("stylesheetUrl");
-stylesheetInput.value = stylesheetUrl;
+stylesheetInput.value = stylesheetUrl || "";
 updateRecordState(isRecording);
 updateClassesFound(numClassesFound);
 
@@ -51,7 +51,6 @@ const createDownload = (fileContent) => {
     url,
     filename: "used_classes.csv",
   });
-  gatheredClasses.clear();
 };
 
 const handleExportClick = async () => {
@@ -64,7 +63,7 @@ const handleExportClick = async () => {
   // send a message to background script to get all of the data
   chrome.runtime.sendMessage({ action: "export" }, (response) => {
     console.log("popup: export data received");
-    createDownload(response.results);
+    createDownload(response.result);
   });
 };
 
