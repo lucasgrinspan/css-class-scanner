@@ -11,7 +11,7 @@ export default class Store {
     this.internalStore = data || {};
   }
 
-  set(key, value, options = {}) {
+  set(key, value, options = { broadcast: true }) {
     const callbacks = this.subscribers[key];
     const oldValue = this.internalStore[key];
 

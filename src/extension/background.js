@@ -4,8 +4,6 @@ import Store from "./store.js";
 
 // Working storage for the background
 const store = new Store({
-  // true if the extension is currently scraping sites for CSS classes
-  isRecording: false,
   // the number of classes found so far
   numClassesFound: 0,
   // the URL of the external stylesheet
@@ -34,6 +32,7 @@ const updateClasses = ([injection]) => {
     }
   });
 
+  console.log(`background: snapshot complete, ${injection.result.length} classes found`);
   store.set("numClassesFound", gatheredClasses.size);
 };
 
@@ -43,8 +42,8 @@ const getCurrentTab = async () => {
 };
 
 // injects a script into the current tab
-const startRecording = async () => {
-  console.log("background: starting to record");
+const takeSnapshot = async () => {
+  console.log("background: taking a snapshot");
   chrome.scripting.executeScript(
     {
       target: { tabId: (await getCurrentTab()).id },
@@ -52,14 +51,6 @@ const startRecording = async () => {
     },
     updateClasses
   );
-};
-
-const stopRecording = async () => {
-  console.log("background: recording stopped");
-  chrome.scripting.executeScript({
-    target: { tabId: (await getCurrentTab()).id },
-    func: removeRecordingIndicator,
-  });
 };
 
 const getClassNames = async (url) => {
@@ -77,35 +68,23 @@ const getResultsAsCsv = () => {
   return csvContent;
 };
 
-// listen for recording status changes
-store.subscribe("isRecording", (isRecording) => {
-  console.log("background: store data changed: isRecording:", isRecording);
-  if (isRecording) {
-    startRecording();
-  } else {
-    stopRecording();
-  }
-});
-
 // handles an action request from the UI
 const handleAction = (action, actionData, sendResponse) => {
   console.log("background: action received:", action);
   switch (action) {
-    case "record":
-      store.set("isRecording", !store.get("isRecording"));
+    case "snapshot":
+      takeSnapshot();
       break;
     case "url":
       store.set("stylesheetUrl", actionData);
       getClassNames(actionData);
       break;
-    case "cancel":
-      store.set("isRecording", false);
+    case "clear":
       store.set("numClassesFound", 0);
       gatheredClasses.clear();
       break;
     case "export":
       sendResponse({ result: getResultsAsCsv() });
-      store.set("isRecording", false);
       store.set("numClassesFound", 0);
       break;
   }
@@ -116,13 +95,6 @@ const handleDataRequest = (request, sendResponse) => {
   const data = store.get(request);
   sendResponse({ data });
 };
-
-// when a tab loads, should keep recording classes
-chrome.tabs.onUpdated.addListener((_, { status }) => {
-  if (status === "complete" && store.get("isRecording")) {
-    startRecording();
-  }
-});
 
 // handle requests for data from the UI
 chrome.runtime.onMessage.addListener((message, _, sendResponse) => {

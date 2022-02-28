@@ -1,6 +1,6 @@
-const recordingButton = document.getElementById("start-recording");
+const snapshotButton = document.getElementById("snapshot");
 const exportButton = document.getElementById("export");
-const cancelButton = document.getElementById("cancel");
+const clearButton = document.getElementById("clear");
 const outputSection = document.getElementById("output");
 const stylesheetInput = document.getElementById("stylesheet-link");
 
@@ -20,27 +20,14 @@ const getFromBackground = async (key) => {
   });
 };
 
-const getUpdatedButtonText = (recording) => {
-  return recording ? "Stop Recording" : "Start Recording";
-};
-const getUpdatedClassesText = (classesFound) => {
-  return classesFound ? `${classesFound} classes found` : "not recording";
-};
-// subsriber function to update recording state
-const updateRecordState = (recording) => {
-  recordingButton.innerHTML = getUpdatedButtonText(recording);
-};
-// subscriber function to update classes found
 const updateClassesFound = (classesFound) => {
-  outputSection.innerHTML = getUpdatedClassesText(classesFound);
+  outputSection.innerHTML = `${classesFound} classes found`;
 };
 
 // initialize UI
-const isRecording = await getFromBackground("isRecording");
 const numClassesFound = await getFromBackground("numClassesFound");
 const stylesheetUrl = await getFromBackground("stylesheetUrl");
 stylesheetInput.value = stylesheetUrl || "";
-updateRecordState(isRecording);
 updateClassesFound(numClassesFound);
 
 const createDownload = (fileContent) => {
@@ -54,10 +41,6 @@ const createDownload = (fileContent) => {
 };
 
 const handleExportClick = async () => {
-  if (!isRecording) {
-    return;
-  }
-
   console.log("popup: requesting export data");
 
   // send a message to background script to get all of the data
@@ -67,14 +50,14 @@ const handleExportClick = async () => {
   });
 };
 
-const handleRecordClick = async () => {
-  console.log("popup: record button clicked");
-  chrome.runtime.sendMessage({ action: "record" });
+const handleSnapshotClick = async () => {
+  console.log("popup: snapshot button clicked");
+  chrome.runtime.sendMessage({ action: "snapshot" });
 };
 
-const handleCancelClick = async () => {
-  console.log("popup: cancel button clicked");
-  chrome.runtime.sendMessage({ action: "cancel" });
+const handleClearClick = async () => {
+  console.log("popup: clear button clicked");
+  chrome.runtime.sendMessage({ action: "clear" });
 };
 
 const handleInputBlur = async () => {
@@ -90,10 +73,6 @@ chrome.runtime.onMessage.addListener((message) => {
   console.log("popup: message received");
   const { updatedKey } = message;
   switch (updatedKey) {
-    case "isRecording":
-      console.log("popup: new recording state:", message.isRecording);
-      updateRecordState(message.isRecording);
-      break;
     case "numClassesFound":
       console.log("popup: new classes found:", message.numClassesFound);
       updateClassesFound(message.numClassesFound);
@@ -101,7 +80,7 @@ chrome.runtime.onMessage.addListener((message) => {
   }
 });
 
-recordingButton.addEventListener("click", handleRecordClick);
+snapshotButton.addEventListener("click", handleSnapshotClick);
 exportButton.addEventListener("click", handleExportClick);
-cancelButton.addEventListener("click", handleCancelClick);
+clearButton.addEventListener("click", handleClearClick);
 stylesheetInput.addEventListener("blur", handleInputBlur);
